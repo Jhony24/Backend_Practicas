@@ -12,7 +12,7 @@ class ProyectoBasico extends Model
     protected $table='proyectobasico';
     protected $primaryKey='id';
     protected $dates = ['deleted_at']; //Registramos la nueva columna
-    protected $fillable = ['id','externalid_basico','idmacro','nombre_prbasico','actividades','estadobasico'];
+    protected $fillable = ['id','externalid_basico','idmacro','idempresa','nombre_prbasico','estudiantes_requeridos','ciclo','horas_cumplir','fecha_inicio','fecha_fin','actividades','requerimientos','estadobasico'];
 
     public static function boot()
     {

@@ -25,16 +25,13 @@ class CreateProyectomacroTable extends Migration
             $table->foreign('idarea')->references('id')->on('areas')
                 ->onDelete('cascade')->onUpdate('cascade');
 
-            $table->integer('idempresa')->unsigned();
+            /*$table->integer('idempresa')->unsigned();
             $table->foreign('idempresa')->references('id')->on('empresas')
-                ->onDelete('cascade')->onUpdate('cascade');
+                ->onDelete('cascade')->onUpdate('cascade');*/
 
             $table->string('nombre_prmacro',100)->unique();
             $table->string('encargado',100);
-            $table->integer('ciclo');
-            $table->integer('horas_pr');
-            $table->date('fecha_inicio');
-            $table->date('fecha_fin');
+            $table->string('descripcion',300);
             $table->integer('estadomacro')->default(0);
             $table->softDeletes();
             $table->timestamps();

@@ -12,7 +12,7 @@ class ProyectoMacro extends Model
     protected $table='proyectomacro';
     protected $primaryKey='id';
     protected $dates = ['deleted_at']; //Registramos la nueva columna
-    protected $fillable = ['id','externalid_macro','idcarrera','idarea','idempresa','nombre_prmacro','encargado','ciclo','horas_pr','fecha_inicio','fecha_fin','estadomacro'];
+    protected $fillable = ['id','externalid_macro','idcarrera','idarea','nombre_prmacro','encargado','descripcion','estadomacro'];
 
     public static function boot()
     {
@@ -27,6 +27,6 @@ class ProyectoMacro extends Model
     }
 
     public function basico(){
-        return $this->hasMany(ProyectoBasico::class,'idmacro');
+        return $this->hasMany(ProyectoBasico::class,'idmacro','id');
     }
 }
