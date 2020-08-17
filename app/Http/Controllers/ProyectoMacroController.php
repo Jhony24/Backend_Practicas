@@ -20,8 +20,7 @@ class ProyectoMacroController extends Controller
             $listado=ProyectoMacro::where('proyectomacro.idcarrera','=',Auth::user()->idcarrera)
                 //->join('carreras','practicas.idcarrera','=','carreras.id')
                 ->join('areas','proyectomacro.idarea','=','areas.id')
-                ->join('empresas','proyectomacro.idempresa','=','empresas.id')
-                ->select('proyectomacro.*','areas.nombrearea','empresas.nombreempresa')
+                ->select('proyectomacro.*','areas.nombrearea')
                 ->get();
                 return response()->json($listado, Response::HTTP_OK);
         } catch (Exception $ex) {

@@ -75,7 +75,7 @@ class AuthController extends Controller
             $user->asignarRol(2);
 
             //$user->roles()->sync(Role::where('nombre_rol', 'user')->first());
-           //Mail::to("jhonyxavi93@gmail.com")->send(new ActivarUsuario());
+            Mail::to("jhony.cupos@gmail.com")->send(new ActivarUsuario());
             return response()->json(['usuario' => $user, 'message' => 'Usuario Creado'], 201);
         } catch (\Exception $e) {
             //return error message

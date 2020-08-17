@@ -27,7 +27,7 @@ class CreateProyectobasicoTable extends Migration
                 
             $table->string('nombre_prbasico', 100)->unique();
             $table->integer('estudianes_requeridos');
-            $table->integer('ciclo');
+            $table->string('ciclo');
             $table->integer('horas_cumplir');
             $table->date('fecha_inicio');
             $table->date('fecha_fin');

@@ -27,6 +27,6 @@ class ProyectoMacro extends Model
     }
 
     public function basico(){
-        return $this->hasMany(ProyectoBasico::class,'idmacro','id');
+        return $this->hasMany(ProyectoBasico::class,'idmacro');
     }
 }

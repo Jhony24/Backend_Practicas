@@ -19,11 +19,13 @@ class CreatePracticasTable extends Migration
             $table->integer('tipo_practica')->default(0);
             $table->integer('cupos');
             $table->integer('horas_cumplir')->nullable();
-            $table->integer('ciclo');
+            $table->string('ciclo');
             $table->date('fecha_inicio');
             $table->time('hora_entrada');
             $table->time('hora_salida');
             $table->double('salario')->nullable();
+            $table->string('activades')->nullable();
+            $table->string('requerimientos')->nullable();
             $table->integer("ppestado")->default(0);
 
             $table->integer('idcarrera')->unsigned();

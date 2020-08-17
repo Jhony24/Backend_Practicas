@@ -8,6 +8,7 @@
         "php": "^7.2.5",
         "illuminate/mail": "^7.22",
         "laravel/lumen-framework": "^7.0",
+        "laraveles/spanish": "^1.5",
         "tymon/jwt-auth": "1.0@dev",
         "webpatser/laravel-uuid": "^3.0"
     },

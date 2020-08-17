@@ -23,7 +23,7 @@ class CreateEmpresasTable extends Migration
             $table->string('direccion',100);
             $table->string('telefono',10)->unique();
             $table->string('correo',100)->unique();
-            $table->string('actividades',300);
+            $table->string('actividades',300)->nullable();
             $table->integer('idcarrera')->unsigned();
             $table->foreign('idcarrera')->references('id')->on('carreras')
                 ->onDelete('cascade')->onUpdate('cascade');

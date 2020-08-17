@@ -158,3 +158,12 @@ $router->get('/mail', function() {
     return "mail enviado";
 });
 
+//prostulaciones
+$router ->group(['prefix'=>'api'], function () use ($router){
+    $router->get('postulacion','PostulacionController@index');
+    //$router->get('macro/{id}','ProyectoMacroController@show');
+    $router->post('postulacion','PostulacionController@store');
+    //$router->put('macro/{id}','ProyectoMacroController@update');
+    //$router->delete('macro/{id}','ProyectoMacroController@destroy');
+});
+

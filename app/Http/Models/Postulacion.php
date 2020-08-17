@@ -6,23 +6,22 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Webpatser\Uuid\Uuid;
 
 
-class ProyectoBasico extends Model
+class Postulacion extends Model
 {
     use SoftDeletes;
-    protected $table='proyectobasico';
+    protected $table='postulacion';
     protected $primaryKey='id';
     protected $dates = ['deleted_at']; //Registramos la nueva columna
-    protected $fillable = ['id','externalid_basico','idmacro','idempresa','nombre_prbasico','estudianes_requeridos','ciclo','horas_cumplir','fecha_inicio','fecha_fin','actividades','requerimientos','estadobasico'];
+    protected $fillable = ['id','externalid_postulacion','id_estudiante','id_practica','id_proyecto','estado_postulacion','fecha_postulacion'];
 
     public static function boot()
     {
         parent::boot();
         self::creating(function($model){
-            $model->externalid_basico=(string) Uuid::generate(4);
+            $model->externalid_postulacion=(string) Uuid::generate(4);
         });
     }
-
     public function getRouterKyName(){
-        return 'externalid_basico';
+        return 'externalid_postulacion';
     }
 }
