@@ -19,9 +19,8 @@ class CreatePostulacionTable extends Migration
             $table->integer('id_estudiante');
             $table->integer('id_practica')->nullable();
             $table->integer('id_proyecto')->nullable();
-            $table->integer('estado_postulacion')->default(0);
+            $table->string('estado_postulacion');
             $table->date('fecha_postulacion');
-
             $table->softDeletes();
             $table->timestamps();
         });

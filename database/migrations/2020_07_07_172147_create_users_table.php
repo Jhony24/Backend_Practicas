@@ -26,7 +26,7 @@ class CreateUsersTable extends Migration
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->string('email')->unique();
             $table->string('password');
-            $table->integer('estadousuario')->default(0);
+            $table->integer('estadousuario');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -24,7 +24,6 @@ class EmpresasController extends Controller
     public function index()
     {
         try {
-
             $empresas = Empresas::join("carreras", "empresas.idcarrera", "=", "carreras.id")
             ->select('empresas.*', 'carreras.nombrecarreras')
             ->where('empresas.idcarrera', '=', Auth::user()->idcarrera)
@@ -56,22 +55,18 @@ class EmpresasController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'idcarrera' => 'required',
+            'nombreempresa' => 'required|unique:empresas',
+            'nombrerepresentante' => 'required|min:15|max:100',
+            'ruc' => 'required|unique:empresas',
+            'direccion' => 'required|min:20|max:150',
+            'telefono'=>'required|unique:empresas',
+            'correo'=>'email|unique:empresas',
+            'actividades'=>'min:20|max:200'
+        ]);
         try {
             $empresas = Empresas::create($request->all());
-            /*$empresas= new Empresas;
-            $empresas->externalid_empresas= $request->input('externalid_empresas');
-            $carrera= $request->input(Auth::user()->idcarrera);
-            $empresas->idcarrera= $request->input(Auth::user()->idcarrera);
-            $empresas->nombreempresa= $request->input('nombreempresa');
-            $empresas->tipo_empresa= $request->input('tipo_empresa');
-            $empresas->nombrerepresentante= $request->input('nombrerepresentante');
-            $empresas->ruc= $request->input('ruc');
-            $empresas->direccion= $request->input('direccion');
-            $empresas->telefono= $request->input('telefono');
-            $empresas->correo= $request->input('correo');
-            $empresas->actividades= $request->input('actividades');
-            $empresas->estadoempresa= $request->input('estadoempresa');
-            $empresas->save();*/
             return response()->json($empresas,Response::HTTP_CREATED);
         } catch (Exception $ex) {
             return response()->json([

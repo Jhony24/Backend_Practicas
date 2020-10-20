@@ -25,7 +25,7 @@ class User extends Model  implements JWTSubject, AuthenticatableContract, Author
     protected $table = 'users';
     protected $primaryKey = 'id';
     protected $fillable = [
-        'externalid_users', 'cedula', 'nombre_completo', 'telefono', 'genero', 'ciclo', 'idcarrera', 'email', 'password','estadousuario'
+        'externalid_users', 'cedula', 'nombre_completo', 'telefono', 'genero', 'ciclo', 'idcarrera', 'email', 'password', 'estadousuario'
     ];
 
     public static function boot()
@@ -85,7 +85,7 @@ class User extends Model  implements JWTSubject, AuthenticatableContract, Author
         if ($this->hasAnyRole($roles)) {
             return true;
         }
-        abort(401, 'This action es unauthorized');
+        abort(403, 'This action es unauthorized');
     }
 
     public function hasAnyRole($roles)
@@ -122,5 +122,6 @@ class User extends Model  implements JWTSubject, AuthenticatableContract, Author
     }
     public function carreradeusuario()
     {
-        return $this->belongsTo(Carreras::class,'idcarrera');    }
+        return $this->belongsTo(Carreras::class, 'idcarrera');
+    }
 }

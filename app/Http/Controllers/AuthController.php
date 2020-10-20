@@ -25,7 +25,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register','registerApp']]);
     }
 
     /**
@@ -38,7 +38,7 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
 
         if (!$token = auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Email o Password no Existen'], 401);
+            return response()->json(['error' => 'Credenciales Invalidas, Intente Nuevamente'], 401);
         }
 
 
@@ -49,7 +49,7 @@ class AuthController extends Controller
     {
         //validate incoming request 
         $this->validate($request, [
-            'cedula' => 'required|unique:users',
+            'cedula' => 'required|unique:users|min:10',
             'nombre_completo' => 'required',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed',
@@ -68,18 +68,53 @@ class AuthController extends Controller
             $user->email = $request->input('email');
             $plainPassword = $request->input('password');
             $user->password = app('hash')->make($plainPassword);
-            //$user->estadousuario = $request->input('estadousuario');
+            $user->estadousuario = $request->input('estadousuario');
             $user->idcarrera = $request->input('idcarrera');
 
             $user->save();
             $user->asignarRol(2);
 
             //$user->roles()->sync(Role::where('nombre_rol', 'user')->first());
-            Mail::to("jhony.cupos@gmail.com")->send(new ActivarUsuario());
+            //Mail::to("jhony.cupos@gmail.com")->send(new ActivarUsuario());
             return response()->json(['usuario' => $user, 'message' => 'Usuario Creado'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['message' => 'Registro de Usuario ha fallado'], 409);
+            return response()->json(['errors' => 'Registro de Usuario ha fallado'], 409);
+        }
+    }
+
+    public function registerApp(Request $request)
+    {
+        //validate incoming request 
+        $this->validate($request, [
+            'cedula' => 'required|unique:users|min:10',
+            'nombre_completo' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|confirmed',
+            'idcarrera' => 'required',
+        ]);
+
+        try {
+
+            $user = new User;
+            $user->externalid_users = $request->input('externalid_users');
+            $user->cedula = $request->input('cedula');
+            $user->nombre_completo = $request->input('nombre_completo');
+            $user->telefono = $request->input('telefono');
+            $user->genero = $request->input('genero');
+            $user->ciclo = $request->input('ciclo');
+            $user->email = $request->input('email');
+            $plainPassword = $request->input('password');
+            $user->password = app('hash')->make($plainPassword);
+            $user->estadousuario = $request->input('estadousuario');
+            $user->idcarrera = $request->input('idcarrera');
+
+            $user->save();
+            $user->asignarRol(3);
+            return response()->json(['usuario' => $user, 'message' => 'Usuario Creado'], 201);
+        } catch (\Exception $e) {
+            //return error message
+            return response()->json(['errors' => 'Registro de Usuario ha fallado'], 409);
         }
     }
 
@@ -88,6 +123,21 @@ class AuthController extends Controller
         try {
             $user = User::findOrFail($id);
             $user->estadousuario = $request->estadousuario = 1;
+            $user->email = $request->email;
+            $user->save();
+            //Mail::to($user->email = $request->email)->send(new ActivarUsuario());
+            return response()->json([$user], Response::HTTP_OK);
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => 'Hubo un error al actualizar el estado del usuario =>' . $id . ' : ' . $ex->getMessage()
+            ], 206);
+        }
+    }
+    public function desactivar(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+            $user->estadousuario = $request->estadousuario = 0;
             $user->save();
             return response()->json([$user], Response::HTTP_OK);
         } catch (Exception $ex) {

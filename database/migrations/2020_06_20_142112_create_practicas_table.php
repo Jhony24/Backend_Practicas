@@ -18,13 +18,13 @@ class CreatePracticasTable extends Migration
             $table->uuid('externalid_practicas')->unique();
             $table->integer('tipo_practica')->default(0);
             $table->integer('cupos');
-            $table->integer('horas_cumplir')->nullable();
-            $table->string('ciclo');
+            $table->integer('horas_cumplir');
+            $table->string('ciclo')->nullable();
             $table->date('fecha_inicio');
-            $table->time('hora_entrada');
-            $table->time('hora_salida');
-            $table->double('salario')->nullable();
-            $table->string('activades')->nullable();
+            $table->time('hora_entrada')->nullable();
+            $table->time('hora_salida')->nullable();
+            $table->double('salario')->nullable()->default(0.0);
+            $table->string('actividades')->nullable();
             $table->string('requerimientos')->nullable();
             $table->integer("ppestado")->default(0);
 
@@ -39,7 +39,7 @@ class CreatePracticasTable extends Migration
             $table->integer('idempresa')->unsigned();
             $table->foreign('idempresa')->references('id')->on('empresas')
                 ->onDelete('cascade')->onUpdate('cascade');
-                $table->softDeletes();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

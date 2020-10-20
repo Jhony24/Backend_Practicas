@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Models\ProyectoBasico;
+use App\Http\Models\ProyectoMacro;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -34,6 +35,7 @@ class ProyectoBasicoController extends Controller
             ], 206);
         }
     }
+   
 
     /**
      * Show the form for creating a new resource.

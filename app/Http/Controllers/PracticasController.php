@@ -29,7 +29,7 @@ class PracticasController extends Controller
                 //->join('carreras','practicas.idcarrera','=','carreras.id')
                 ->join('areas','practicas.idarea','=','areas.id')
                 ->join('empresas','practicas.idempresa','=','empresas.id')
-                ->select('practicas.*','areas.nombrearea','empresas.nombreempresa')
+                ->select('practicas.*','areas.nombrearea','empresas.nombreempresa','empresas.tipo_empresa','empresas.direccion','empresas.correo')
                 ->where('practicas.tipo_practica','=',1)
                 ->get();
                 return response()->json($listado, Response::HTTP_OK);
@@ -51,7 +51,7 @@ class PracticasController extends Controller
                 //->join('carreras','practicas.idcarrera','=','carreras.id')
                 ->join('areas','practicas.idarea','=','areas.id')
                 ->join('empresas','practicas.idempresa','=','empresas.id')
-                ->select('practicas.*','areas.nombrearea','empresas.nombreempresa')
+                ->select('practicas.*','areas.nombrearea','empresas.nombreempresa','empresas.tipo_empresa','empresas.direccion','empresas.correo')
                 ->where('practicas.tipo_practica','=',2)
                 ->get();
                 return response()->json($listado, Response::HTTP_OK);

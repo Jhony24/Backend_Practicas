@@ -16,7 +16,7 @@ class CarrerasController extends Controller
 {
 
     public function __construct()
-    { 
+    {
         //$this->middleware('auth');
         //$this->middleware('role:admin');
     }
@@ -26,7 +26,8 @@ class CarrerasController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-     public function indexR(){
+    public function indexR()
+    {
         try {
             $listado = Carreras::all();
             return response()->json($listado, Response::HTTP_OK);
@@ -35,13 +36,12 @@ class CarrerasController extends Controller
                 'error' => 'Hubo un error al listar los datos de carreras: ' . $ex->getMessage()
             ], 206);
         }
-     }
+    }
     public function index(Request $request)
     {
-        if(Auth::check()){
-            if(!Auth::user()->isAdmin()){
-
-                $id=Auth::id();
+        if (Auth::check()) {
+            if (!Auth::user()->isAdmin()) {
+                $id = Auth::id();
                 try {
                     $carreras = User::find($id);
                     $lista = $carreras->carreradeusuario;
@@ -51,8 +51,7 @@ class CarrerasController extends Controller
                         'error' => 'Huno un error al enconrar la carrera =>' . $id . ' : ' . $ex->getMessage()
                     ], 404);
                 }
-                
-            }else{
+            } else {
                 try {
                     $listado = Carreras::all();
                     return response()->json($listado, Response::HTTP_OK);
@@ -61,14 +60,13 @@ class CarrerasController extends Controller
                         'error' => 'Hubo un error al listar los datos de carreras: ' . $ex->getMessage()
                     ], 206);
                 }
-               
             }
         }
-            
-        
+
+
         //return response()->json(['carrera' =>  Carreras::all()], 200);
     }
-   
+
 
     /**
      * Show the form for creating a new resource.

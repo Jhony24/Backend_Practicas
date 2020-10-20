@@ -27,7 +27,7 @@ class ConveniosController extends Controller
             $listado = Convenio::join('empresas', 'convenio.idempresa', '=', 'empresas.id')
                 ->join('carreras', 'convenio.idcarrera', '=', 'carreras.id')
                 ->select('convenio.*', 'empresas.nombreempresa', 'carreras.nombrecarreras')
-                ->where('convenio.idcarrera','=', Auth::user()->idcarrera)
+                ->where('convenio.idcarrera', '=', Auth::user()->idcarrera)
                 ->get();
             return response()->json($listado, Response::HTTP_OK);
         } catch (Exception $ex) {
@@ -55,12 +55,48 @@ class ConveniosController extends Controller
      */
     public function store(Request $request)
     {
+        $validator =
+            Validator::make($request->all(), [
+                'idempresa' => 'required',
+                'idcarrera' => 'required',
+                'fecha_inicio'=>'required',
+                'fecha_culminacion' =>'min:5|max:20',
+                'objeto'=>'required|min:20|max:200'
+            ]);
+
+        if ($validator->fails()) {
+            return response($validator->errors()->all(), 422);
+        }
         try {
-            $convenios = Convenio::create($request->all());
+            /*if($request->hasFile('archivo_convenio')){
+                $file = $request->file('archivo_convenio');
+                $name = time().$file->getClientOriginalName();
+                $file->move(public_path().'/convenios/',$name);
+            }*/
+
+            $convenios = new Convenio();
+            $convenios->tipo_convenio= $request->input('tipo_convenio');
+            $convenios->idempresa= $request->input('idempresa');
+            $convenios->idcarrera= $request->input('idcarrera');
+            $convenios->fecha_inicio= $request->input('fecha_inicio');
+            $convenios->fecha_culminacion= $request->input('fecha_culminacion');
+            $convenios->estado_convenio= $request->input('estado_convenio');
+            $convenios->objeto= $request->input('objeto');
+            $convenios->externalid_convenio= $request->input('externalid_convenio');
+            
+            //$convenios->archivo_convenio=$name;
+            $convenios->save();
+
             return response()->json($convenios, Response::HTTP_CREATED);
+
+
+            //return $request;
+            //$convenios->save();
+            //$convenios = Convenio::create($request->all());
+            //return response()->json($convenios, Response::HTTP_CREATED);
         } catch (Exception $ex) {
             return response()->json([
-                'error' => 'Hubo un error al registrar los datos de conevios: ' . $ex->getMessage()
+                'error' => 'Hubo un error al registrar los datos de convenios: ' . $ex->getMessage()
             ], 400);
         }
     }

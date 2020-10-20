@@ -20,7 +20,7 @@ class CreateConvenioTable extends Migration
             $table->string('tipo_convenio',100);
             $table->integer('idempresa')->unsigned();
             $table->foreign('idempresa')->references('id')->on('empresas')
-                ->onDelete('cascade')->onUpdate('cascade');
+                ->onDelete('cascade');
             $table->date('fecha_inicio');
             $table->string('fecha_culminacion',100);
             $table->string('objeto',100);
@@ -28,6 +28,7 @@ class CreateConvenioTable extends Migration
             $table->foreign('idcarrera')->references('id')->on('carreras')
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->integer("estado_convenio")->default(0);
+            $table->string("archivo_convenio");
             $table->softDeletes();
             $table->timestamps();
         });

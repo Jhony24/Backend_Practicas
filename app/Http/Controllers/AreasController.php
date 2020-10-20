@@ -17,7 +17,9 @@ class AreasController extends Controller
 {
 
     public function __construct()
-    { }
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -74,6 +76,14 @@ class AreasController extends Controller
     public function store(Request $request)
     {
 
+        $validator =
+            Validator::make($request->all(), [
+                'nombrearea' => 'required|unique:areas|min:6|max:50',
+            ]);
+
+        if ($validator->fails()) {
+            return response($validator->errors()->all(), 422);
+        }
         try {
             $areas = Areas::create($request->all());
             return response()->json($areas, Response::HTTP_CREATED);
@@ -94,11 +104,12 @@ class AreasController extends Controller
     {
         try {
             $areas = Areas::find($id);
+
             $lista = $areas->carreras1;
             return response()->json($areas, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error' => 'Huno un error al enconrar la area =>' . $id . ' : ' . $ex->getMessage()
+                'error' => 'Hubo un error al encontrar el area =>' . $id . ' : ' . $ex->getMessage()
             ], 404);
         }
     }
@@ -123,6 +134,9 @@ class AreasController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'nombrearea' => 'required|unique:areas,nombrearea',
+        ]);
         try {
             $areas = Areas::findOrFail($id);
             $areas->update($request->all());
@@ -147,7 +161,7 @@ class AreasController extends Controller
             return response()->json([], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error' => 'Huno un error al eliminar la area =>' . $id . ' : ' . $ex->getMessage()
+                'error' => 'Hubo un error al eliminar el area =>' . $id . ' : ' . $ex->getMessage()
             ], 400);
         }
     }
