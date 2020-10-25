@@ -79,9 +79,6 @@ class PostulacionController extends Controller
      */
     public function store(Request $request)
     {
-        /*$this->validate($request, [
-            'id_estudiante' => 'required|unique:postulacion',
-        ]);*/
         try {
             $postulacion = new Postulacion;
             $postulacion->externalid_postulacion = $request->input('externalid_postulacion');
@@ -92,15 +89,15 @@ class PostulacionController extends Controller
             $postulacion->fecha_postulacion = $request->input('fecha_postulacion');
 
             $practica = Practicas::find($postulacion->id_practica = $request->input('id_practica'));
-            $estudiante = Postulacion::where('id_estudiante', '=', $postulacion->id_estudiante = $request->input('id_estudiante'))->where('estado_postulacion', '!=','FINALIZADA')->where('estado_postulacion', '!=','RECHAZADA')->get();
-
-
+            $estudiante = Postulacion::where('id_estudiante', '=', $postulacion->id_estudiante = $request->input('id_estudiante'))
+            ->where('estado_postulacion', '!=','FINALIZADA')->where('estado_postulacion', '!=','RECHAZADA')->get();
             if ($practica->cupos > 0 && $estudiante->count() <= 0) {
                 $postulacion->save();
                 Practicas::find($postulacion->id_practica = $request->input('id_practica'))->decrement('cupos');
                 return response()->json($postulacion, Response::HTTP_OK);
             } else {
-                return response()->json(['message' => 'No existe cupos disponibles para esta practica o usted ya posee una postulacion', $practica->cupos, $estudiante->count()], 409);
+                return response()->json(['message' => 'No existe cupos disponibles para esta practica ya posee una postulacion', 
+                $practica->cupos, $estudiante->count()], 409);
             }
         } catch (Exception $ex) {
             return response()->json([

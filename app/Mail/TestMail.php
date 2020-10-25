@@ -27,8 +27,6 @@ class TestMail extends Mailable
      */
     public function build()
     {
-        //return $this->view('view.name');
-        //return $this->subject("Prueba");
         return $this->html('Se ha registrado un usuario en el "Sistema de Gestion de Cupos para Practicas" por favor verificar los datos para la activacion del mismo');
     }
 }

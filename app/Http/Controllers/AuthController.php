@@ -48,7 +48,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         //validate incoming request 
-        $this->validate($request, [
+        $message=$this->validate($request, [
             'cedula' => 'required|unique:users|min:10',
             'nombre_completo' => 'required',
             'email' => 'required|email|unique:users',
@@ -75,11 +75,11 @@ class AuthController extends Controller
             $user->asignarRol(2);
 
             //$user->roles()->sync(Role::where('nombre_rol', 'user')->first());
-            //Mail::to("jhony.cupos@gmail.com")->send(new ActivarUsuario());
+            Mail::to("jhonycupos@gmail.com")->send(new ActivarUsuario($message));
             return response()->json(['usuario' => $user, 'message' => 'Usuario Creado'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['errors' => 'Registro de Usuario ha fallado'], 409);
+            return response()->json(['errors' => 'Registro de Usuario ha fallado'.$e->getMessage()], 409);
         }
     }
 

@@ -106,6 +106,12 @@ $router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router
     $router->delete('practica/{id}', 'PracticasController@destroy');
 });
 
+$router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router) {
+    $router->post('sendPasswordReserLink', 'ResetPasswordController@sendEmail');
+    $router->post('resetPassword', 'ChangePasswordController@process');
+
+});
+
 
 
 //convenios
