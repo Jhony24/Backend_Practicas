@@ -14,7 +14,7 @@ class UsuarioController extends Controller
 
     public function __construct()
     {
-        
+        $this->middleware('auth');
     }
     /**
      * Display a listing of the resource.
@@ -25,13 +25,13 @@ class UsuarioController extends Controller
     {
         try {
             $listado = DB::table('users')
-                ->join('carreras','users.idcarrera','=',"carreras.id")
-                ->select('users.*','carreras.nombrecarreras')
+                ->join('carreras', 'users.idcarrera', '=', "carreras.id")
+                ->select('users.*', 'carreras.nombrecarreras')
                 ->get();
             return response()->json($listado, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al listar losd atos de los usuarios: '.$ex->getMessage()
+                'error' => 'Huno un error al listar losd atos de los usuarios: ' . $ex->getMessage()
             ], 206);
         }
     }
@@ -56,10 +56,10 @@ class UsuarioController extends Controller
     {
         try {
             $usuario = Usuario::create($request->all());
-            return response()->json($usuario,Response::HTTP_CREATED);
+            return response()->json($usuario, Response::HTTP_CREATED);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al registrar losd atos de areas: '.$ex->getMessage()
+                'error' => 'Huno un error al registrar losd atos de areas: ' . $ex->getMessage()
             ], 400);
         }
     }
@@ -74,10 +74,10 @@ class UsuarioController extends Controller
     {
         try {
             $usuario = Usuario::find($id);
-            return response()->json($usuario,Response::HTTP_OK);
+            return response()->json($usuario, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al enconrar la area =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Huno un error al enconrar la area =>' . $id . ' : ' . $ex->getMessage()
             ], 404);
         }
     }
@@ -105,10 +105,10 @@ class UsuarioController extends Controller
         try {
             $areas = Usuario::findOrFail($id);
             $areas->update($request->all());
-            return response()->json($areas,Response::HTTP_OK);
+            return response()->json($areas, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al actualizar la area =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Huno un error al actualizar la area =>' . $id . ' : ' . $ex->getMessage()
             ], 206);
         }
     }
@@ -123,11 +123,10 @@ class UsuarioController extends Controller
     {
         try {
             Usuario::find($id)->delete();
-            return response()->json([],Response::HTTP_OK);
-
+            return response()->json([], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al eliminar la area =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Huno un error al eliminar la area =>' . $id . ' : ' . $ex->getMessage()
             ], 400);
         }
     }

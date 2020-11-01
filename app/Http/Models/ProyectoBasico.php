@@ -25,4 +25,5 @@ class ProyectoBasico extends Model
     public function getRouterKyName(){
         return 'externalid_basico';
     }
+
 }

@@ -42,6 +42,7 @@ $router->get('/test', function () {
 $router->group(['prefix' => 'api',], function () use ($router) {
 
     $router->post('login', 'AuthController@login');
+    $router->post('login_App', 'AuthController@loginApp');
     $router->post('register', 'AuthController@register');
     $router->post('registerapp', 'AuthController@registerApp');
     $router->post('logout', 'AuthController@logout');
@@ -162,6 +163,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->get('postulacion', 'PostulacionController@index');
     $router->get('postulacionest','PostulacionController@indexPos');
     $router->post('postulacion', 'PostulacionController@store');
-    //$router->put('macro/{id}','ProyectoMacroController@update');
-    //$router->delete('macro/{id}','ProyectoMacroController@destroy');
+    $router->post('postulacionmacro', 'PostulacionController@storemacro');
+    $router->put('aprobar/{id}', 'PostulacionController@aprobar');
+    $router->put('rechazar/{id}', 'PostulacionController@rechazar');
 });

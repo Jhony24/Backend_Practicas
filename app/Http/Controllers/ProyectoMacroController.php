@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Models\ProyectoBasico;
 use App\Http\Models\ProyectoMacro;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -9,6 +10,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProyectoMacroController extends Controller
 {
+    public function __construct()
+    {
+        //$this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -49,6 +54,7 @@ class ProyectoMacroController extends Controller
     public function store(Request $request)
     {
         try {
+
             $macro = ProyectoMacro::create($request->all());
             return response()->json($macro,Response::HTTP_CREATED);
         } catch (Exception $ex) {
@@ -67,9 +73,12 @@ class ProyectoMacroController extends Controller
     public function show($id)
     {
         try {
-            $macro = ProyectoMacro::find($id);
-            $lista=$macro->basico;
-            return response()->json($lista,Response::HTTP_OK);
+            $listado=ProyectoBasico::where('proyectobasico.idmacro','=',$id)
+            //->join('carreras','practicas.idcarrera','=','carreras.id')
+            ->join('empresas','proyectobasico.idempresa','=','empresas.id')
+            ->select('proyectobasico.*','empresas.*')
+            ->get();
+            return response()->json($listado,Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
                 'error'=>'Hubo un error al encontrar el proyecto macro =>'.$id.' : '.$ex->getMessage()

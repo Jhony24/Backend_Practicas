@@ -63,8 +63,6 @@ class CarrerasController extends Controller
             }
         }
 
-
-        //return response()->json(['carrera' =>  Carreras::all()], 200);
     }
 
 

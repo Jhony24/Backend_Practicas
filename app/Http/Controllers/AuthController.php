@@ -25,7 +25,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register','registerApp']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'registerApp']]);
     }
 
     /**
@@ -45,10 +45,20 @@ class AuthController extends Controller
         return $this->respondWithToken($token);
     }
 
+    public function loginApp()
+    {
+        $credentials = request(['email', 'password']);
+
+        if (!$token = auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Credenciales Invalidas, Intente Nuevamente'], 401);
+        }
+        return $this->respondWithTokenApp($token);
+    }
+
     public function register(Request $request)
     {
         //validate incoming request 
-        $message=$this->validate($request, [
+        $message = $this->validate($request, [
             'cedula' => 'required|unique:users|min:10',
             'nombre_completo' => 'required',
             'email' => 'required|email|unique:users',
@@ -79,7 +89,7 @@ class AuthController extends Controller
             return response()->json(['usuario' => $user, 'message' => 'Usuario Creado'], 201);
         } catch (\Exception $e) {
             //return error message
-            return response()->json(['errors' => 'Registro de Usuario ha fallado'.$e->getMessage()], 409);
+            return response()->json(['errors' => 'Registro de Usuario ha fallado' . $e->getMessage()], 409);
         }
     }
 
@@ -202,7 +212,6 @@ class AuthController extends Controller
             $usuarios = User::join("carreras", "users.idcarrera", "=", "carreras.id")
                 ->select('users.*', 'carreras.nombrecarreras')
                 ->get();
-            //$listado = User::all();
             return response()->json($usuarios, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
@@ -220,6 +229,7 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
+       
         if (auth()->user()->estadousuario == 1) {
             return response()->json([
                 'access_token' => $token,
@@ -229,6 +239,23 @@ class AuthController extends Controller
             ]);
         } else if (auth()->user()->estadousuario == 0) {
             return response()->json(['error' => 'Cuenta no Activa, Espere Confirmación'], 401);
+        }
+    }
+
+    protected function respondWithTokenApp($token)
+    {
+        $id = Auth::id();
+        $usuario = User::find($id);
+        $rol = $usuario->Rol();
+        if (auth()->user()->estadousuario == 1 && $rol == 'Estudiante') {
+            return response()->json([
+                'access_token' => $token,
+                'token_type' => 'bearer',
+                //'expires_in' => auth()->factory()->getTTL() * 60,
+                'user' => auth()->user()
+            ]);
+        } else if (auth()->user()->estadousuario == 0) {
+            return response()->json(['error' => 'No puede Ingresar en la Aplicación'], 401);
         }
     }
 }

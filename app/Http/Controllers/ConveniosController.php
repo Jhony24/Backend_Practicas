@@ -14,7 +14,9 @@ class ConveniosController extends Controller
 {
 
     public function __construct()
-    { }
+    {
+        $this->middleware('auth');
+    }
     /**
      * Display a listing of the resource.
      *
@@ -59,9 +61,9 @@ class ConveniosController extends Controller
             Validator::make($request->all(), [
                 'idempresa' => 'required',
                 'idcarrera' => 'required',
-                'fecha_inicio'=>'required',
-                'fecha_culminacion' =>'min:5|max:20',
-                'objeto'=>'required|min:20|max:200'
+                'fecha_inicio' => 'required',
+                'fecha_culminacion' => 'min:5|max:20',
+                'objeto' => 'required|min:20|max:200'
             ]);
 
         if ($validator->fails()) {
@@ -75,15 +77,15 @@ class ConveniosController extends Controller
             }*/
 
             $convenios = new Convenio();
-            $convenios->tipo_convenio= $request->input('tipo_convenio');
-            $convenios->idempresa= $request->input('idempresa');
-            $convenios->idcarrera= $request->input('idcarrera');
-            $convenios->fecha_inicio= $request->input('fecha_inicio');
-            $convenios->fecha_culminacion= $request->input('fecha_culminacion');
-            $convenios->estado_convenio= $request->input('estado_convenio');
-            $convenios->objeto= $request->input('objeto');
-            $convenios->externalid_convenio= $request->input('externalid_convenio');
-            
+            $convenios->tipo_convenio = $request->input('tipo_convenio');
+            $convenios->idempresa = $request->input('idempresa');
+            $convenios->idcarrera = $request->input('idcarrera');
+            $convenios->fecha_inicio = $request->input('fecha_inicio');
+            $convenios->fecha_culminacion = $request->input('fecha_culminacion');
+            $convenios->estado_convenio = $request->input('estado_convenio');
+            $convenios->objeto = $request->input('objeto');
+            $convenios->externalid_convenio = $request->input('externalid_convenio');
+
             //$convenios->archivo_convenio=$name;
             $convenios->save();
 
