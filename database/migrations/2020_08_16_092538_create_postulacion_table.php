@@ -21,6 +21,7 @@ class CreatePostulacionTable extends Migration
             $table->integer('id_proyecto')->nullable();
             $table->string('estado_postulacion');
             $table->date('fecha_postulacion');
+            $table->string('observacion',200)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

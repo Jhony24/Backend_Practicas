@@ -25,7 +25,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register', 'registerApp']]);
+        $this->middleware('auth:api', ['except' => ['login', 'register', 'registerApp', 'loginApp']]);
     }
 
     /**
@@ -229,33 +229,44 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
-       
-        if (auth()->user()->estadousuario == 1) {
-            return response()->json([
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => auth()->factory()->getTTL() * 60,
-                'user' => auth()->user()
-            ]);
-        } else if (auth()->user()->estadousuario == 0) {
-            return response()->json(['error' => 'Cuenta no Activa, Espere Confirmación'], 401);
+        //$id = Auth::id();
+        $usuario = auth()->user()->id;
+        $usuario2 = User::find($usuario);
+        $rol = $usuario2->Rol();
+        if ($rol[0] == 'admin' || $rol[0] == 'user') {
+            if (auth()->user()->estadousuario == 1) {
+                return response()->json([
+                    'access_token' => $token,
+                    'token_type' => 'bearer',
+                    'expires_in' => auth()->factory()->getTTL() * 60,
+                    'user' => auth()->user()
+                ]);
+            } else if (auth()->user()->estadousuario == 0) {
+                return response()->json(['error' => 'Cuenta no Activa, Espere Confirmación'], 401);
+            }
+        } else {
+            return response()->json(['error' => 'No tiene permiso para ingresar'], 401);
         }
     }
 
     protected function respondWithTokenApp($token)
     {
-        $id = Auth::id();
-        $usuario = User::find($id);
-        $rol = $usuario->Rol();
-        if (auth()->user()->estadousuario == 1 && $rol == 'Estudiante') {
-            return response()->json([
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                //'expires_in' => auth()->factory()->getTTL() * 60,
-                'user' => auth()->user()
-            ]);
-        } else if (auth()->user()->estadousuario == 0) {
-            return response()->json(['error' => 'No puede Ingresar en la Aplicación'], 401);
+        $usuario = auth()->user()->id;
+        $usuario2 = User::find($usuario);
+        $rol = $usuario2->Rol();
+        if ($rol[0] == 'estudiante') {
+            if (auth()->user()->estadousuario == 1) {
+                return response()->json([
+                    'access_token' => $token,
+                    'token_type' => 'bearer',
+                    //'expires_in' => auth()->factory()->getTTL() * 60,
+                    'user' => auth()->user()
+                ]);
+            } else if (auth()->user()->estadousuario == 0) {
+                return response()->json(['error' => 'No puede Ingresar en la Aplicación'], 401);
+            }
+        } else {
+            return response()->json(['error' => 'No tiene permiso para ingresar'], 401);
         }
     }
 }

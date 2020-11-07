@@ -53,12 +53,13 @@ $router->group(['prefix' => 'api',], function () use ($router) {
     $router->put('usuarioA/{id}', 'AuthController@activar');
     $router->put('usuarioD/{id}', 'AuthController@desactivar');
     $router->get('roles-profile', 'AuthController@rolesprofile');
+    $router->get('carreraR', 'CarrerasController@indexR');
 });
 
 //carreras
-$router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router) {
+$router->group(['middleware' => ['auth'], 'prefix' => 'api'], function () use ($router) {
     $router->get('carrera', 'CarrerasController@index');
-    $router->get('carreraR', 'CarrerasController@indexR');
+   
     $router->get('carrera/{id}', 'CarrerasController@show');
     $router->post('carrera', 'CarrerasController@store');
     $router->put('carrera/{id}', 'CarrerasController@update');
@@ -66,7 +67,7 @@ $router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router
 });
 
 //usuarios
-$router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router) {
+$router->group(['middleware' => ['auth'], 'prefix' => 'api'], function () use ($router) {
     $router->get('usuario', 'UsuarioController@index');
     $router->get('usuario/{id}', 'UsuarioController@show');
     $router->post('usuario', 'UsuarioController@store');
@@ -76,9 +77,7 @@ $router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router
 
 //areas
 
-$router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router) {
-
-
+$router->group(['middleware' => ['auth'], 'prefix' => 'api'], function () use ($router) {
     $router->get('area', 'AreasController@index');
     //$router->get('area','AreasController@indexU');
     $router->get('area/{id}', 'AreasController@show');
@@ -89,7 +88,7 @@ $router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router
 
 
 //empresas
-$router->group(['prefix' => 'api'], function () use ($router) {
+$router->group(['middleware' => ['auth'],'prefix' => 'api'], function () use ($router) {
     $router->get('empresa', 'EmpresasController@index');
     $router->get('empresa/{id}', 'EmpresasController@show');
     $router->post('empresa', 'EmpresasController@store');
@@ -98,7 +97,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 });
 
 //practicas
-$router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router) {
+$router->group(['middleware' => ['auth'], 'prefix' => 'api'], function () use ($router) {
     $router->get('practica', 'PracticasController@index');
     $router->get('practicaP', 'PracticasController@indexP');
     $router->get('practica/{id}', 'PracticasController@show');
@@ -107,7 +106,7 @@ $router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router
     $router->delete('practica/{id}', 'PracticasController@destroy');
 });
 
-$router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router) {
+$router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('sendPasswordReserLink', 'ResetPasswordController@sendEmail');
     $router->post('resetPassword', 'ChangePasswordController@process');
 
@@ -116,7 +115,7 @@ $router->group(['middleware' => [], 'prefix' => 'api'], function () use ($router
 
 
 //convenios
-$router->group(['prefix' => 'api'], function () use ($router) {
+$router->group(['middleware' => ['auth'],'prefix' => 'api'], function () use ($router) {
     $router->get('convenio', 'ConveniosController@index');
     $router->get('convenio/{id}', 'ConveniosController@show');
     $router->post('convenio', 'ConveniosController@store');
@@ -125,7 +124,7 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 });
 
 //proyecto macro
-$router->group(['prefix' => 'api'], function () use ($router) {
+$router->group(['middleware' => ['auth'],'prefix' => 'api'], function () use ($router) {
     $router->get('macro', 'ProyectoMacroController@index');
     $router->get('macro/{id}', 'ProyectoMacroController@show');
     $router->post('macro', 'ProyectoMacroController@store');
@@ -134,28 +133,12 @@ $router->group(['prefix' => 'api'], function () use ($router) {
 });
 
 //proyecto basico
-$router->group(['prefix' => 'api'], function () use ($router) {
+$router->group(['middleware' => ['auth'],'prefix' => 'api'], function () use ($router) {
     $router->get('basico', 'ProyectoBasicoController@index');
     $router->get('basico/{id}', 'ProyectoBasicoController@show');
     $router->post('basico', 'ProyectoBasicoController@store');
     $router->put('basico/{id}', 'ProyectoBasicoController@update');
     $router->delete('basico/{id}', 'ProyectoBasicoController@destroy');
-});
-
-
-//probar relaciones
-$router->get('/probar', function () {
-    $carrera = App\Http\Models\Carreras::findOrFail(1); //id de la carrera que tiene relacion con la tabla areas
-    return $carrera->areas1->toArray();
-});
-$router->get('/probar2', function () {
-    $area = App\Http\Models\Areas::findOrFail(1); //id de la carrera que tiene relacion con la tabla areas
-    return $area->carreras1->toArray();
-});
-
-$router->get('/mail', function () {
-    Mail::to("admin@admin.com")->send(new TestMail());
-    return "mail enviado";
 });
 
 //prostulaciones
@@ -166,4 +149,6 @@ $router->group(['prefix' => 'api'], function () use ($router) {
     $router->post('postulacionmacro', 'PostulacionController@storemacro');
     $router->put('aprobar/{id}', 'PostulacionController@aprobar');
     $router->put('rechazar/{id}', 'PostulacionController@rechazar');
+    $router->put('finalizar/{id}', 'PostulacionController@finalizar');
+    $router->put('encurso/{id}', 'PostulacionController@encurso');
 });

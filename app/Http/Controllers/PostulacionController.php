@@ -33,7 +33,7 @@ class PostulacionController extends Controller
                 ->join('areas', 'practicas.idarea', '=', 'areas.id')
                 ->join('empresas', 'practicas.idempresa', '=', 'empresas.id')
                 ->join('carreras', 'users.idcarrera', '=', 'carreras.id')
-                ->select('postulacion.*', 'users.*', 'practicas.*', 'practicas.*', 'areas.nombrearea', 'empresas.nombreempresa', 'carreras.nombrecarreras')
+                ->select('postulacion.*', 'users.nombre_completo', 'users.cedula', 'users.telefono', 'users.email', 'users.ciclo', 'carreras.nombrecarreras', 'practicas.tipo_practica','practicas.fecha_inicio', 'areas.nombrearea', 'empresas.nombreempresa')
                 ->where('users.idcarrera', '=', Auth::user()->idcarrera)
                 ->get();
 
@@ -165,6 +165,34 @@ class PostulacionController extends Controller
             //$user->email = $request->email;
             $postulacion->save();
             //Mail::to($user->email = $request->email)->send(new ActivarUsuario());
+            return response()->json([$postulacion], Response::HTTP_OK);
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => 'Hubo un error al rechazar el estado de la postulacion =>' . $id . ' : ' . $ex->getMessage()
+            ], 206);
+        }
+    }
+    public function finalizar(Request $request, $id)
+    {
+        try {
+            $postulacion = Postulacion::findOrFail($id);
+            $postulacion->estado_postulacion = $request->estado_postulacion = 'FINALIZADA';
+            //$user->email = $request->email;
+            $postulacion->save();
+            //Mail::to($user-> = $request->email)->send(new ActivarUsuario());
+            return response()->json([$postulacion], Response::HTTP_OK);
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => 'Hubo un error al rechazar el estado de la postulacion =>' . $id . ' : ' . $ex->getMessage()
+            ], 206);
+        }
+    }
+    public function encurso(Request $request, $id)
+    {
+        try {
+            $postulacion = Postulacion::findOrFail($id);
+            $postulacion->estado_postulacion = $request->estado_postulacion = 'EN CURSO';
+            $postulacion->save();
             return response()->json([$postulacion], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([

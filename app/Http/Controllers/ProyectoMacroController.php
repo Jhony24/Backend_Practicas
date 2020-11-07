@@ -76,7 +76,7 @@ class ProyectoMacroController extends Controller
             $listado=ProyectoBasico::where('proyectobasico.idmacro','=',$id)
             //->join('carreras','practicas.idcarrera','=','carreras.id')
             ->join('empresas','proyectobasico.idempresa','=','empresas.id')
-            ->select('proyectobasico.*','empresas.*')
+            ->select('proyectobasico.*','empresas.nombreempresa','empresas.tipo_empresa','empresas.direccion','empresas.correo')
             ->get();
             return response()->json($listado,Response::HTTP_OK);
         } catch (Exception $ex) {
