@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Models\Carreras;
 use App\Http\Models\Role;
 use Illuminate\Database\Seeder;
 
@@ -26,5 +27,10 @@ class RoleTableSeeder extends Seeder
         $role->nombre_rol='estudiante';
         $role->descripcion="Estudiante";
         $role->save();
+
+        $carrera=new Carreras();
+        $carrera->nombrecarreras='Ingenieria en Sistemas/Computación';
+        $carrera->estadocarreras=1;
+        $carrera->save();
     }
 }

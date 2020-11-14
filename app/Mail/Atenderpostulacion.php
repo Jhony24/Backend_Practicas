@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class TestMail extends Mailable
+class Atenderpostulacion extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -18,6 +18,7 @@ class TestMail extends Mailable
      */
     public function __construct()
     {
+        //
     }
 
     /**
@@ -27,6 +28,6 @@ class TestMail extends Mailable
      */
     public function build()
     {
-        return $this->html('Se ha registrado un usuario en el "Sistema de Gestion de Cupos para Practicas" por favor verificar los datos para la activacion del mismo');
+        return $this->view('Email.solicitudPostulacion');
     }
 }

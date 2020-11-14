@@ -25,14 +25,14 @@ class EmpresasController extends Controller
     {
         try {
             $empresas = Empresas::join("carreras", "empresas.idcarrera", "=", "carreras.id")
-            ->select('empresas.*', 'carreras.nombrecarreras')
-            ->where('empresas.idcarrera', '=', Auth::user()->idcarrera)
-            ->get();
+                ->select('empresas.*', 'carreras.nombrecarreras')
+                ->where('empresas.idcarrera', '=', Auth::user()->idcarrera)
+                ->get();
             //$listado = Empresas::all();
-            return response()->json($empresas,Response::HTTP_OK);
+            return response()->json($empresas, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al listar losd atos de empresas: '.$ex->getMessage()
+                'error' => 'Huno un error al listar losd atos de empresas: ' . $ex->getMessage()
             ], 206);
         }
     }
@@ -43,9 +43,7 @@ class EmpresasController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-        
-    }
+    { }
 
     /**
      * Store a newly created resource in storage.
@@ -57,20 +55,20 @@ class EmpresasController extends Controller
     {
         $this->validate($request, [
             'idcarrera' => 'required',
-            'nombreempresa' => 'required|unique:empresas',
+            'nombreempresa' => 'required',
             'nombrerepresentante' => 'required|min:15|max:100',
-            'ruc' => 'required|unique:empresas',
+            'ruc' => 'required',
             'direccion' => 'required|min:20|max:150',
-            'telefono'=>'required|unique:empresas',
-            'correo'=>'email|unique:empresas',
-            'actividades'=>'min:20|max:200'
+            'telefono' => 'required',
+            'correo' => 'email',
+            'actividades' => 'min:20|max:200'
         ]);
         try {
             $empresas = Empresas::create($request->all());
-            return response()->json($empresas,Response::HTTP_CREATED);
+            return response()->json($empresas, Response::HTTP_CREATED);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al registrar los datos de empresas: '.$ex->getMessage()
+                'error' => 'Hubo un error al registrar los datos de empresas: ' . $ex->getMessage()
             ], 400);
         }
     }
@@ -88,7 +86,7 @@ class EmpresasController extends Controller
             return response()->json($empresas, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al enconrar la empresa =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Huno un error al enconrar la empresa =>' . $id . ' : ' . $ex->getMessage()
             ], 404);
         }
     }
@@ -116,10 +114,10 @@ class EmpresasController extends Controller
         try {
             $empresas = Empresas::findOrFail($id);
             $empresas->update($request->all());
-            return response()->json($empresas,Response::HTTP_OK);
+            return response()->json($empresas, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al actualizar la empresa =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Huno un error al actualizar la empresa =>' . $id . ' : ' . $ex->getMessage()
             ], 206);
         }
     }
@@ -134,11 +132,10 @@ class EmpresasController extends Controller
     {
         try {
             Empresas::find($id)->delete();
-            return response()->json([],Response::HTTP_OK);
-
+            return response()->json([], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al eliminar la empresa =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Huno un error al eliminar la empresa =>' . $id . ' : ' . $ex->getMessage()
             ], 400);
         }
     }

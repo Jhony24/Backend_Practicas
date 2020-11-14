@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use App\Http\Models\Postulacion;
 use App\Http\Models\Practicas;
 use App\Http\Models\ProyectoBasico;
+use App\Mail\Atenderpostulacion;
+use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Validator;
 
 class PostulacionController extends Controller
@@ -25,7 +28,7 @@ class PostulacionController extends Controller
      */
 
 
-    public function index()
+    public function indexPractica()
     {
         try {
             $listado = Postulacion::join('users', 'postulacion.id_estudiante', '=', 'users.id')
@@ -33,7 +36,47 @@ class PostulacionController extends Controller
                 ->join('areas', 'practicas.idarea', '=', 'areas.id')
                 ->join('empresas', 'practicas.idempresa', '=', 'empresas.id')
                 ->join('carreras', 'users.idcarrera', '=', 'carreras.id')
-                ->select('postulacion.*', 'users.nombre_completo', 'users.cedula', 'users.telefono', 'users.email', 'users.ciclo', 'carreras.nombrecarreras', 'practicas.tipo_practica','practicas.fecha_inicio', 'areas.nombrearea', 'empresas.nombreempresa')
+                ->select('postulacion.*', 'users.nombre_completo', 'users.cedula', 'users.telefono', 'users.email', 'users.ciclo', 'carreras.nombrecarreras', 'practicas.tipo_practica', 'practicas.fecha_inicio', 'areas.nombrearea', 'empresas.nombreempresa')
+                ->where('users.idcarrera', '=', Auth::user()->idcarrera)
+                ->where('postulacion.id_practica', '=', 1)
+                ->get();
+
+            return response()->json($listado, Response::HTTP_OK);
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => 'Hubo un error al listar los datos de postulacion: ' . $ex->getMessage()
+            ], 206);
+        }
+    }
+
+    public function indexPasantia()
+    {
+        try {
+            $listado = Postulacion::join('users', 'postulacion.id_estudiante', '=', 'users.id')
+                ->join('practicas', 'postulacion.id_practica', '=', 'practicas.id')
+                ->join('areas', 'practicas.idarea', '=', 'areas.id')
+                ->join('empresas', 'practicas.idempresa', '=', 'empresas.id')
+                ->join('carreras', 'users.idcarrera', '=', 'carreras.id')
+                ->select('postulacion.*', 'users.nombre_completo', 'users.cedula', 'users.telefono', 'users.email', 'users.ciclo', 'carreras.nombrecarreras', 'practicas.tipo_practica', 'practicas.fecha_inicio', 'areas.nombrearea', 'empresas.nombreempresa')
+                ->where('users.idcarrera', '=', Auth::user()->idcarrera)
+                ->where('postulacion.id_practica', '=', 2)
+                ->get();
+
+            return response()->json($listado, Response::HTTP_OK);
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => 'Hubo un error al listar los datos de postulacion: ' . $ex->getMessage()
+            ], 206);
+        }
+    }
+    public function indexProyecto()
+    {
+        try {
+            $listado = Postulacion::join('users', 'postulacion.id_estudiante', '=', 'users.id')
+                ->join('proyectobasico', 'postulacion.id_proyecto', '=', 'proyectobasico.id')
+                ->join('empresas', 'proyectobasico.idempresa', '=', 'empresas.id')
+                ->join('carreras', 'users.idcarrera', '=', 'carreras.id')
+                ->select('postulacion.*', 'users.nombre_completo', 'users.cedula', 'users.telefono', 'users.email', 'users.ciclo', 'carreras.nombrecarreras', 'proyectobasico.fecha_inicio', 'empresas.nombreempresa')
                 ->where('users.idcarrera', '=', Auth::user()->idcarrera)
                 ->get();
 
@@ -144,12 +187,13 @@ class PostulacionController extends Controller
 
     public function aprobar(Request $request, $id)
     {
+
         try {
             $postulacion = Postulacion::findOrFail($id);
             $postulacion->estado_postulacion = $request->estado_postulacion = 'APROBADA';
-            //$user->email = $request->email;
+            $email = User::find($postulacion->id_estudiante);
             $postulacion->save();
-            //Mail::to($user->email = $request->email)->send(new ActivarUsuario());
+            Mail::to($email->email)->send(new Atenderpostulacion());
             return response()->json([$postulacion], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
@@ -162,9 +206,9 @@ class PostulacionController extends Controller
         try {
             $postulacion = Postulacion::findOrFail($id);
             $postulacion->estado_postulacion = $request->estado_postulacion = 'RECHAZADA';
-            //$user->email = $request->email;
+            $email = User::find($postulacion->id_estudiante);
             $postulacion->save();
-            //Mail::to($user->email = $request->email)->send(new ActivarUsuario());
+            Mail::to($email->email)->send(new Atenderpostulacion());
             return response()->json([$postulacion], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([

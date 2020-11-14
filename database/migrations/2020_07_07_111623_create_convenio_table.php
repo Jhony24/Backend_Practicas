@@ -28,7 +28,7 @@ class CreateConvenioTable extends Migration
             $table->foreign('idcarrera')->references('id')->on('carreras')
                 ->onDelete('cascade')->onUpdate('cascade');
             $table->integer("estado_convenio")->default(0);
-            $table->string("archivo_convenio");
+            $table->string("archivo_convenio")->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

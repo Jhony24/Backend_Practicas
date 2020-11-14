@@ -59,7 +59,6 @@ $router->group(['prefix' => 'api',], function () use ($router) {
 //carreras
 $router->group(['middleware' => ['auth'], 'prefix' => 'api'], function () use ($router) {
     $router->get('carrera', 'CarrerasController@index');
-   
     $router->get('carrera/{id}', 'CarrerasController@show');
     $router->post('carrera', 'CarrerasController@store');
     $router->put('carrera/{id}', 'CarrerasController@update');
@@ -143,7 +142,9 @@ $router->group(['middleware' => ['auth'],'prefix' => 'api'], function () use ($r
 
 //prostulaciones
 $router->group(['prefix' => 'api'], function () use ($router) {
-    $router->get('postulacion', 'PostulacionController@index');
+    $router->get('postulacionpractica', 'PostulacionController@indexPractica');
+    $router->get('postulacionpasantia', 'PostulacionController@indexPasantia');
+    $router->get('postulacionproyecto', 'PostulacionController@indexProyecto');
     $router->get('postulacionest','PostulacionController@indexPos');
     $router->post('postulacion', 'PostulacionController@store');
     $router->post('postulacionmacro', 'PostulacionController@storemacro');
