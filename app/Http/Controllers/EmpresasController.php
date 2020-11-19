@@ -55,7 +55,7 @@ class EmpresasController extends Controller
     {
         $this->validate($request, [
             'idcarrera' => 'required',
-            'nombreempresa' => 'required',
+            'nombreempresa' => 'required|min:20|max:200',
             'nombrerepresentante' => 'required|min:15|max:100',
             'ruc' => 'required',
             'direccion' => 'required|min:20|max:150',

@@ -19,7 +19,7 @@ class CreateEmpresasTable extends Migration
             $table->string('nombreempresa',100)->unique();
             $table->string('tipo_empresa',100);
             $table->string('nombrerepresentante',100);
-            $table->integer('ruc')->unique();
+            $table->string('ruc',13)->unique();
             $table->string('direccion',100);
             $table->string('telefono',10)->unique();
             $table->string('correo',100)->unique();

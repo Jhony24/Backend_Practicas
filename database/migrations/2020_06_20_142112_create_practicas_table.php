@@ -21,9 +21,9 @@ class CreatePracticasTable extends Migration
             $table->integer('horas_cumplir');
             $table->string('ciclo')->nullable();
             $table->date('fecha_inicio');
-            $table->time('hora_entrada')->nullable();
-            $table->time('hora_salida')->nullable();
-            $table->double('salario')->nullable()->default(0.0);
+            $table->text('hora_entrada')->nullable();
+            $table->text('hora_salida')->nullable();
+            $table->text('salario')->nullable()->default(0.0);
             $table->string('actividades')->nullable();
             $table->string('requerimientos')->nullable();
             $table->integer("ppestado")->default(0);
