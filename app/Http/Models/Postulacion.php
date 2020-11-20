@@ -12,7 +12,7 @@ class Postulacion extends Model
     protected $table='postulacion';
     protected $primaryKey='id';
     protected $dates = ['deleted_at']; //Registramos la nueva columna
-    protected $fillable = ['id','externalid_postulacion','id_estudiante','id_practica','id_proyecto','estado_postulacion','fecha_postulacion'];
+    protected $fillable = ['id','externalid_postulacion','id_estudiante','id_practica','id_proyecto','estado_postulacion','fecha_postulacion','observacion'];
 
     public static function boot()
     {

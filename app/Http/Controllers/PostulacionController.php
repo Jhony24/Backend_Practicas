@@ -36,9 +36,9 @@ class PostulacionController extends Controller
                 ->join('areas', 'practicas.idarea', '=', 'areas.id')
                 ->join('empresas', 'practicas.idempresa', '=', 'empresas.id')
                 ->join('carreras', 'users.idcarrera', '=', 'carreras.id')
-                ->select('postulacion.*', 'users.nombre_completo', 'users.cedula', 'users.telefono', 'users.email', 'users.ciclo', 'carreras.nombrecarreras', 'practicas.tipo_practica', 'practicas.fecha_inicio', 'areas.nombrearea', 'empresas.nombreempresa')
+                ->select('postulacion.*', 'users.nombre_completo', 'users.cedula', 'users.telefono', 'users.email', 'users.ciclo', 'carreras.nombrecarreras', 'practicas.tipo_practica', 'practicas.fecha_inicio', 'practicas.ciclo_necesario', 'areas.nombrearea', 'empresas.nombreempresa')
                 ->where('users.idcarrera', '=', Auth::user()->idcarrera)
-                ->where('postulacion.id_practica', '=', 1)
+                ->where('postulacion.tipo_practica', '=', 1)
                 ->get();
 
             return response()->json($listado, Response::HTTP_OK);
@@ -59,7 +59,7 @@ class PostulacionController extends Controller
                 ->join('carreras', 'users.idcarrera', '=', 'carreras.id')
                 ->select('postulacion.*', 'users.nombre_completo', 'users.cedula', 'users.telefono', 'users.email', 'users.ciclo', 'carreras.nombrecarreras', 'practicas.tipo_practica', 'practicas.fecha_inicio', 'areas.nombrearea', 'empresas.nombreempresa')
                 ->where('users.idcarrera', '=', Auth::user()->idcarrera)
-                ->where('postulacion.id_practica', '=', 2)
+                ->where('postulacion.tipo_practica', '=', 2)
                 ->get();
 
             return response()->json($listado, Response::HTTP_OK);
@@ -74,10 +74,13 @@ class PostulacionController extends Controller
         try {
             $listado = Postulacion::join('users', 'postulacion.id_estudiante', '=', 'users.id')
                 ->join('proyectobasico', 'postulacion.id_proyecto', '=', 'proyectobasico.id')
+                ->join('proyectomacro', 'proyectobasico.idmacro', '=', 'proyectomacro.id')
+                ->join('areas', 'proyectomacro.idarea', '=', 'areas.id')
                 ->join('empresas', 'proyectobasico.idempresa', '=', 'empresas.id')
                 ->join('carreras', 'users.idcarrera', '=', 'carreras.id')
-                ->select('postulacion.*', 'users.nombre_completo', 'users.cedula', 'users.telefono', 'users.email', 'users.ciclo', 'carreras.nombrecarreras', 'proyectobasico.fecha_inicio', 'empresas.nombreempresa')
+                ->select('postulacion.*', 'proyectomacro.nombre_prmacro', 'areas.nombrearea', 'users.nombre_completo', 'users.cedula', 'users.telefono', 'users.email', 'users.ciclo', 'proyectobasico.nombre_prbasico', 'carreras.nombrecarreras', 'proyectobasico.fecha_inicio', 'empresas.nombreempresa')
                 ->where('users.idcarrera', '=', Auth::user()->idcarrera)
+                ->where('postulacion.tipo_practica', '=', 3)
                 ->get();
 
             return response()->json($listado, Response::HTTP_OK);
@@ -131,6 +134,7 @@ class PostulacionController extends Controller
             $postulacion->id_estudiante = $request->input('id_estudiante');
             $postulacion->id_practica = $request->input('id_practica');
             $postulacion->id_proyecto = $request->input('id_proyecto');
+            $postulacion->tipo_practica = $request->input('tipo_practica');
             $postulacion->estado_postulacion = $request->input('estado_postulacion');
             $postulacion->fecha_postulacion = $request->input('fecha_postulacion');
 
@@ -143,7 +147,7 @@ class PostulacionController extends Controller
                 return response()->json($postulacion, Response::HTTP_OK);
             } else {
                 return response()->json([
-                    'message' => 'No existe cupos disponibles para esta practica ya posee una postulacion',
+                    'message' => 'No existe cupos disponibles para esta practica o ya posee una postulacion',
                     $practica->cupos, $estudiante->count()
                 ], 409);
             }
@@ -162,6 +166,7 @@ class PostulacionController extends Controller
             $postulacion->id_estudiante = $request->input('id_estudiante');
             $postulacion->id_practica = $request->input('id_practica');
             $postulacion->id_proyecto = $request->input('id_proyecto');
+            $postulacion->tipo_practica = $request->input('tipo_practica');
             $postulacion->estado_postulacion = $request->input('estado_postulacion');
             $postulacion->fecha_postulacion = $request->input('fecha_postulacion');
             $proyecto = ProyectoBasico::find($postulacion->id_proyecto = $request->input('id_proyecto'));
@@ -191,10 +196,11 @@ class PostulacionController extends Controller
         try {
             $postulacion = Postulacion::findOrFail($id);
             $postulacion->estado_postulacion = $request->estado_postulacion = 'APROBADA';
+            $postulacion->observacion = $request->input('observacion');
             $email = User::find($postulacion->id_estudiante);
             $postulacion->save();
-            Mail::to($email->email)->send(new Atenderpostulacion());
-            return response()->json([$postulacion], Response::HTTP_OK);
+            //Mail::to($email->email)->send(new Atenderpostulacion());
+            return response()->json($postulacion, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
                 'error' => 'Hubo un error al actualizar el estado de la postulacion =>' . $id . ' : ' . $ex->getMessage()

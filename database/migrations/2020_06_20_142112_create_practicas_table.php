@@ -19,7 +19,7 @@ class CreatePracticasTable extends Migration
             $table->integer('tipo_practica')->default(0);
             $table->integer('cupos');
             $table->integer('horas_cumplir');
-            $table->string('ciclo')->nullable();
+            $table->string('ciclo_necesario')->nullable();
             $table->date('fecha_inicio');
             $table->text('hora_entrada')->nullable();
             $table->text('hora_salida')->nullable();
