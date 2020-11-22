@@ -98,9 +98,9 @@ class AuthController extends Controller
         //validate incoming request 
         $this->validate($request, [
             'cedula' => 'required|unique:users|min:10',
-            'nombre_completo' => 'required',
+            'nombre_completo' => 'required|min:20|max|100',
             'email' => 'required|email|unique:users',
-            'password' => 'required|confirmed',
+            'password' => 'required|confirmed|min:8|max:20',
             'idcarrera' => 'required',
         ]);
 

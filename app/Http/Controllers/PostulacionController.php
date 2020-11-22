@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Validator;
+use Carbon\Carbon;
 
 class PostulacionController extends Controller
 {
@@ -90,7 +91,7 @@ class PostulacionController extends Controller
             ], 206);
         }
     }
-    public function indexPos()
+    public function indexPosPrac()
     {
         try {
             $listado = Postulacion::where('postulacion.id_estudiante', '=', Auth::user()->id)
@@ -99,7 +100,47 @@ class PostulacionController extends Controller
                 ->join('areas', 'practicas.idarea', '=', 'areas.id')
                 ->join('empresas', 'practicas.idempresa', '=', 'empresas.id')
                 ->join('carreras', 'users.idcarrera', '=', 'carreras.id')
-                ->select('postulacion.*', 'users.nombre_completo', 'practicas.*', 'areas.nombrearea', 'empresas.nombreempresa')
+                ->where('postulacion.tipo_practica', '=', 1)
+                ->select('postulacion.*', 'practicas.fecha_inicio', 'areas.nombrearea', 'empresas.nombreempresa')
+                ->get();
+
+            return response()->json($listado, Response::HTTP_OK);
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => 'Hubo un error al listar los datos de postulacion: ' . $ex->getMessage()
+            ], 206);
+        }
+    }
+    public function indexPosPas()
+    {
+        try {
+            $listado = Postulacion::where('postulacion.id_estudiante', '=', Auth::user()->id)
+                ->join('users', 'postulacion.id_estudiante', '=', 'users.id')
+                ->join('practicas', 'postulacion.id_practica', '=', 'practicas.id')
+                ->join('areas', 'practicas.idarea', '=', 'areas.id')
+                ->join('empresas', 'practicas.idempresa', '=', 'empresas.id')
+                ->join('carreras', 'users.idcarrera', '=', 'carreras.id')
+                ->where('postulacion.tipo_practica', '=', 2)
+                ->select('postulacion.*', 'practicas.fecha_inicio', 'areas.nombrearea', 'empresas.nombreempresa')
+                ->get();
+
+            return response()->json($listado, Response::HTTP_OK);
+        } catch (Exception $ex) {
+            return response()->json([
+                'error' => 'Hubo un error al listar los datos de postulacion: ' . $ex->getMessage()
+            ], 206);
+        }
+    }
+    public function indexPosProy()
+    {
+        try {
+            $listado = Postulacion::where('postulacion.id_estudiante', '=', Auth::user()->id)
+                ->join('proyectobasico', 'postulacion.id_proyecto', '=', 'proyectobasico.id')
+                ->join('proyectomacro', 'proyectobasico.idmacro', '=', 'proyectomacro.id')
+                ->join('areas', 'proyectomacro.idarea', '=', 'areas.id')
+                ->join('empresas', 'proyectobasico.idempresa', '=', 'empresas.id')
+                ->select('postulacion.*', 'proyectomacro.nombre_prmacro', 'areas.nombrearea', 'proyectobasico.nombre_prbasico', 'proyectobasico.fecha_inicio', 'empresas.nombreempresa')
+                ->where('postulacion.tipo_practica', '=', 3)
                 ->get();
 
             return response()->json($listado, Response::HTTP_OK);
@@ -141,14 +182,25 @@ class PostulacionController extends Controller
             $practica = Practicas::find($postulacion->id_practica = $request->input('id_practica'));
             $estudiante = Postulacion::where('id_estudiante', '=', $postulacion->id_estudiante = $request->input('id_estudiante'))
                 ->where('estado_postulacion', '!=', 'FINALIZADA')->where('estado_postulacion', '!=', 'RECHAZADA')->get();
-            if ($practica->cupos > 0 && $estudiante->count() <= 0) {
-                $postulacion->save();
-                Practicas::find($postulacion->id_practica = $request->input('id_practica'))->decrement('cupos');
-                return response()->json($postulacion, Response::HTTP_OK);
+            if ($practica->cupos > 0) {
+                if ($estudiante->count() <= 0) {
+                    if ($practica->fecha_inicio > \Carbon\Carbon::now()->toDateString()) {
+                        $postulacion->save();
+                        ProyectoBasico::find($postulacion->id_proyecto = $request->input('id_proyecto'))->decrement('estudianes_requeridos');
+                        return response()->json($postulacion, Response::HTTP_OK);
+                    } else {
+                        return response()->json([
+                            'message' => 'Error en la fecha',
+                        ], 409);
+                    }
+                } else {
+                    return response()->json([
+                        'message' => 'Ya posees una postulación activa',
+                    ], 409);
+                }
             } else {
                 return response()->json([
-                    'message' => 'No existe cupos disponibles para esta practica o ya posee una postulacion',
-                    $practica->cupos, $estudiante->count()
+                    'message' => 'No existe cupos disponibles para',
                 ], 409);
             }
         } catch (Exception $ex) {
@@ -160,6 +212,8 @@ class PostulacionController extends Controller
 
     public function storeMacro(Request $request)
     {
+        $now = new \DateTime();
+        //dd($now->format('d-m-Y H:i:s'));
         try {
             $postulacion = new Postulacion;
             $postulacion->externalid_postulacion = $request->input('externalid_postulacion');
@@ -172,14 +226,25 @@ class PostulacionController extends Controller
             $proyecto = ProyectoBasico::find($postulacion->id_proyecto = $request->input('id_proyecto'));
             $estudiante = Postulacion::where('id_estudiante', '=', $postulacion->id_estudiante = $request->input('id_estudiante'))
                 ->where('estado_postulacion', '!=', 'FINALIZADA')->where('estado_postulacion', '!=', 'RECHAZADA')->get();
-            if ($proyecto->estudianes_requeridos > 0 && $estudiante->count() <= 0) {
-                $postulacion->save();
-                ProyectoBasico::find($postulacion->id_proyecto = $request->input('id_proyecto'))->decrement('estudianes_requeridos');
-                return response()->json($postulacion, Response::HTTP_OK);
+            if ($proyecto->estudianes_requeridos > 0) {
+                if ($estudiante->count() <= 0) {
+                    if ($proyecto->fecha_inicio > \Carbon\Carbon::now()->toDateString()) {
+                        $postulacion->save();
+                        ProyectoBasico::find($postulacion->id_proyecto = $request->input('id_proyecto'))->decrement('estudianes_requeridos');
+                        return response()->json($postulacion, Response::HTTP_OK);
+                    } else {
+                        return response()->json([
+                            'message' => 'Error en la fecha',
+                        ], 409);
+                    }
+                } else {
+                    return response()->json([
+                        'message' => 'Ya posees una postulación activa',
+                    ], 409);
+                }
             } else {
                 return response()->json([
-                    'message' => 'No existe cupos disponibles para esta practica ya posee una postulacion',
-                    $proyecto->estudianes_requeridos, $estudiante->count()
+                    'message' => 'No existe cupos disponibles para',
                 ], 409);
             }
         } catch (Exception $ex) {
@@ -199,7 +264,7 @@ class PostulacionController extends Controller
             $postulacion->observacion = $request->input('observacion');
             $email = User::find($postulacion->id_estudiante);
             $postulacion->save();
-            //Mail::to($email->email)->send(new Atenderpostulacion());
+            Mail::to($email->email)->send(new Atenderpostulacion());
             return response()->json($postulacion, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
@@ -212,6 +277,7 @@ class PostulacionController extends Controller
         try {
             $postulacion = Postulacion::findOrFail($id);
             $postulacion->estado_postulacion = $request->estado_postulacion = 'RECHAZADA';
+            $postulacion->observacion = $request->input('observacion');
             $email = User::find($postulacion->id_estudiante);
             $postulacion->save();
             Mail::to($email->email)->send(new Atenderpostulacion());
