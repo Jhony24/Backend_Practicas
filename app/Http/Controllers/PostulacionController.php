@@ -212,8 +212,7 @@ class PostulacionController extends Controller
 
     public function storeMacro(Request $request)
     {
-        $now = new \DateTime();
-        //dd($now->format('d-m-Y H:i:s'));
+        
         try {
             $postulacion = new Postulacion;
             $postulacion->externalid_postulacion = $request->input('externalid_postulacion');

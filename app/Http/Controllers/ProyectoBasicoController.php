@@ -60,7 +60,7 @@ class ProyectoBasicoController extends Controller
             return response()->json($proyectobasico,Response::HTTP_CREATED);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al registrar losd atos de macro: '.$ex->getMessage()
+                'error'=>'Error al registrar el proyecto basico: '.$ex->getMessage()
             ], 400);
         }
     }

@@ -24,6 +24,7 @@ class CreatePracticasTable extends Migration
             $table->text('hora_entrada')->nullable();
             $table->text('hora_salida')->nullable();
             $table->text('salario')->nullable()->default(0.0);
+            $table->text('modalidad',100);
             $table->string('actividades')->nullable();
             $table->string('requerimientos')->nullable();
             $table->integer("ppestado")->default(0);

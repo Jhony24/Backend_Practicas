@@ -24,15 +24,16 @@ class CreateProyectobasicoTable extends Migration
             $table->integer('idempresa')->unsigned();
             $table->foreign('idempresa')->references('id')->on('empresas')
                 ->onDelete('cascade')->onUpdate('cascade');
-                
+
             $table->string('nombre_prbasico', 100)->unique();
             $table->integer('estudianes_requeridos');
-            $table->string('ciclo');
+            $table->string('ciclo')->nullable();
+            $table->string('modalidad', 10);
             $table->integer('horas_cumplir')->nullable();
             $table->date('fecha_inicio');
-            $table->date('fecha_fin');
-            $table->string('actividades', 200);
-            $table->string('requerimientos', 200);
+            $table->date('fecha_fin')->nullable();
+            $table->string('actividades', 200)->nullable();
+            $table->string('requerimientos', 200)->nullable();
             $table->integer('estadobasico')->default(0);
             $table->softDeletes();
             $table->timestamps();

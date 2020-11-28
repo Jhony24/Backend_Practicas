@@ -29,7 +29,12 @@ class RoleTableSeeder extends Seeder
         $role->save();
 
         $carrera=new Carreras();
-        $carrera->nombrecarreras='Ingenieria en Sistemas/Computación';
+        $carrera->nombrecarreras='Ingenieria en Sistemas';
+        $carrera->estadocarreras=1;
+        $carrera->save();
+
+        $carrera=new Carreras();
+        $carrera->nombrecarreras='Computación';
         $carrera->estadocarreras=1;
         $carrera->save();
     }

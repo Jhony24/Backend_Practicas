@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Models\Carreras;
 use App\Http\Models\Role;
+use App\Mail\Activacion;
 use App\Mail\ActivarUsuario;
 use App\Mail\TestMail;
 use App\User;
@@ -98,7 +100,7 @@ class AuthController extends Controller
         //validate incoming request 
         $this->validate($request, [
             'cedula' => 'required|unique:users|min:10',
-            'nombre_completo' => 'required|min:20|max|100',
+            'nombre_completo' => 'required|min:10|max:100',
             'email' => 'required|email|unique:users',
             'password' => 'required|confirmed|min:8|max:20',
             'idcarrera' => 'required',
@@ -135,7 +137,7 @@ class AuthController extends Controller
             $user->estadousuario = $request->estadousuario = 1;
             $user->email = $request->email;
             $user->save();
-            //Mail::to($user->email = $request->email)->send(new ActivarUsuario());
+            Mail::to($user->email = $request->email)->send(new Activacion());
             return response()->json([$user], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
@@ -192,6 +194,7 @@ class AuthController extends Controller
     {
         $id = Auth::id();
         $usuario = User::find($id);
+
         $rol = $usuario->roles;
         return response()->json($usuario, Response::HTTP_OK);
     }
@@ -202,6 +205,15 @@ class AuthController extends Controller
         $usuario = User::find($id);
         $rol = $usuario->Rol();
         return response()->json($rol, Response::HTTP_OK);
+    }
+    public function userCarrera()
+    {
+        $id = Auth::id();
+        $user = User::find($id);
+        $carrera = Carreras::find($user->idcarrera);
+        //dd($carrera);
+
+        return response()->json($carrera, Response::HTTP_OK);
     }
 
     public function allUsers(Request $request)

@@ -50,6 +50,7 @@ $router->group(['prefix' => 'api',], function () use ($router) {
     $router->get('user-profile', 'AuthController@userProfile');
     $router->get('users', 'AuthController@allUsers');
     $router->post('me', 'AuthController@me');
+    $router->get('user-carrera', 'AuthController@userCarrera');
     $router->put('usuarioA/{id}', 'AuthController@activar');
     $router->put('usuarioD/{id}', 'AuthController@desactivar');
     $router->get('roles-profile', 'AuthController@rolesprofile');
