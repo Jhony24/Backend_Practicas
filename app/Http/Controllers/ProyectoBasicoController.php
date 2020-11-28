@@ -25,17 +25,17 @@ class ProyectoBasicoController extends Controller
     {
         try {
             $listado = DB::table('proyectobasico')
-                ->join('proyectomacro','proyectobasico.idmacro','=',"proyectomacro.id")
-                ->select('proyectobasico.*','proyectomacro.nombre_prmacro')
+                ->join('proyectomacro', 'proyectobasico.idmacro', '=', "proyectomacro.id")
+                ->select('proyectobasico.*', 'proyectomacro.nombre_prmacro')
                 ->get();
             return response()->json($listado, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al listar losd atos de basico: '.$ex->getMessage()
+                'error' => 'Huno un error al listar losd atos de basico: ' . $ex->getMessage()
             ], 206);
         }
     }
-   
+
 
     /**
      * Show the form for creating a new resource.
@@ -55,12 +55,26 @@ class ProyectoBasicoController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'idmacro' => 'required',
+            'idempresa' => 'required',
+            'estudianes_requeridos' => 'required|numeric|min:1|max:20',
+            'ciclo' => 'min:3|max:20',
+            'fecha_inicio' => 'required',
+            'modalidad' => 'required',
+            'actividades' => 'min:20|max:250',
+            'requerimientos' => 'min:20|max:250',
+            'horas_cumplir' => 'required|numeric|min:1|max:200',
+            'estadobasico' => 'required',
+            'nombre_prbasico' => 'required|unique:proyectobasico|min:10|max:100'
+
+        ]);
         try {
             $proyectobasico = ProyectoBasico::create($request->all());
-            return response()->json($proyectobasico,Response::HTTP_CREATED);
+            return response()->json($proyectobasico, Response::HTTP_CREATED);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Error al registrar el proyecto basico: '.$ex->getMessage()
+                'error' => 'Error al registrar el proyecto basico: ' . $ex->getMessage()
             ], 400);
         }
     }
@@ -75,10 +89,10 @@ class ProyectoBasicoController extends Controller
     {
         try {
             $proyectobasico = ProyectoBasico::find($id);
-            return response()->json($proyectobasico,Response::HTTP_OK);
+            return response()->json($proyectobasico, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al enconrar la basico =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Huno un error al enconrar la basico =>' . $id . ' : ' . $ex->getMessage()
             ], 404);
         }
     }
@@ -103,13 +117,27 @@ class ProyectoBasicoController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'idmacro' => 'required',
+            'idempresa' => 'required',
+            'estudianes_requeridos' => 'required|numeric|min:1|max:20',
+            'ciclo' => 'min:3|max:20',
+            'fecha_inicio' => 'required',
+            'modalidad' => 'required',
+            'actividades' => 'min:20|max:250',
+            'requerimientos' => 'min:20|max:250',
+            'horas_cumplir' => 'required|numeric|min:1|max:200',
+            'estadobasico' => 'required',
+            'nombre_prbasico' => 'required|min:10|max:100,proyectobasico'
+
+        ]);
         try {
             $proyectobasico = ProyectoBasico::findOrFail($id);
             $proyectobasico->update($request->all());
-            return response()->json($proyectobasico,Response::HTTP_OK);
+            return response()->json($proyectobasico, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al actualizar la basico =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Hubo un error al actualizar la basico =>' . $id . ' : ' . $ex->getMessage()
             ], 206);
         }
     }
@@ -124,11 +152,10 @@ class ProyectoBasicoController extends Controller
     {
         try {
             ProyectoBasico::find($id)->delete();
-            return response()->json([],Response::HTTP_OK);
-
+            return response()->json([], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Huno un error al eliminar la baisco =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Huno un error al eliminar la baisco =>' . $id . ' : ' . $ex->getMessage()
             ], 400);
         }
     }

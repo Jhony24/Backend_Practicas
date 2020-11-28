@@ -57,24 +57,19 @@ class ConveniosController extends Controller
      */
     public function store(Request $request)
     {
-        $validator =
-            Validator::make($request->all(), [
-                'idempresa' => 'required',
-                'idcarrera' => 'required',
-                'fecha_inicio' => 'required',
-                'fecha_culminacion' => 'min:5|max:20',
-                'objeto' => 'required|min:20|max:200'
-            ]);
+        $this->validate($request, [
+            'idempresa' => 'required',
+            'idcarrera' => 'required',
+            'fecha_inicio' => 'required',
+            'fecha_culminacion' => 'required|min:1|max:7',
+            'objeto' => 'required|min:20|max:100',
+            'estado_convenio' => 'required',
+            'tipo_convenio' => 'required|min:10|max:50',
+        ]);
 
-        if ($validator->fails()) {
-            return response($validator->errors()->all(), 422);
-        }
+
         try {
-            /*if($request->hasFile('archivo_convenio')){
-                $file = $request->file('archivo_convenio');
-                $name = time().$file->getClientOriginalName();
-                $file->move(public_path().'/convenios/',$name);
-            }*/
+
 
             $convenios = new Convenio();
             $convenios->tipo_convenio = $request->input('tipo_convenio');
@@ -141,6 +136,15 @@ class ConveniosController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'idempresa' => 'required',
+            'idcarrera' => 'required',
+            'fecha_inicio' => 'required',
+            'fecha_culminacion' => 'required|min:1|max:7',
+            'objeto' => 'required|min:20|max:100',
+            'estado_convenio' => 'required',
+            'tipo_convenio' => 'required|min:10|max:50',
+        ]);
         try {
             $convenios = Convenio::findOrFail($id);
             $convenios->update($request->all());

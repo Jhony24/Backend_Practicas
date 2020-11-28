@@ -25,20 +25,20 @@ class PracticasController extends Controller
     public function index()
     {
         try {
-            $listado=Practicas::where('practicas.idcarrera','=',Auth::user()->idcarrera)
+            $listado = Practicas::where('practicas.idcarrera', '=', Auth::user()->idcarrera)
                 //->join('carreras','practicas.idcarrera','=','carreras.id')
-                ->join('areas','practicas.idarea','=','areas.id')
-                ->join('empresas','practicas.idempresa','=','empresas.id')
-                ->select('practicas.*','areas.nombrearea','empresas.nombreempresa','empresas.tipo_empresa','empresas.direccion','empresas.correo')
-                ->where('practicas.tipo_practica','=',1)
+                ->join('areas', 'practicas.idarea', '=', 'areas.id')
+                ->join('empresas', 'practicas.idempresa', '=', 'empresas.id')
+                ->select('practicas.*', 'areas.nombrearea', 'empresas.nombreempresa', 'empresas.tipo_empresa', 'empresas.direccion', 'empresas.correo')
+                ->where('practicas.tipo_practica', '=', 1)
                 ->get();
-                return response()->json($listado, Response::HTTP_OK);
+            return response()->json($listado, Response::HTTP_OK);
 
 
-                //dd($listado);
+            //dd($listado);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al listar los datos de practicas: '.$ex->getMessage()
+                'error' => 'Hubo un error al listar los datos de practicas: ' . $ex->getMessage()
             ], 206);
         }
     }
@@ -46,21 +46,21 @@ class PracticasController extends Controller
     public function indexP()
     {
         try {
-            $id=Auth::user();
-            $listado=Practicas::where('practicas.idcarrera','=',Auth::user()->idcarrera)
+            $id = Auth::user();
+            $listado = Practicas::where('practicas.idcarrera', '=', Auth::user()->idcarrera)
                 //->join('carreras','practicas.idcarrera','=','carreras.id')
-                ->join('areas','practicas.idarea','=','areas.id')
-                ->join('empresas','practicas.idempresa','=','empresas.id')
-                ->select('practicas.*','areas.nombrearea','empresas.nombreempresa','empresas.tipo_empresa','empresas.direccion','empresas.correo')
-                ->where('practicas.tipo_practica','=',2)
+                ->join('areas', 'practicas.idarea', '=', 'areas.id')
+                ->join('empresas', 'practicas.idempresa', '=', 'empresas.id')
+                ->select('practicas.*', 'areas.nombrearea', 'empresas.nombreempresa', 'empresas.tipo_empresa', 'empresas.direccion', 'empresas.correo')
+                ->where('practicas.tipo_practica', '=', 2)
                 ->get();
-                return response()->json($listado, Response::HTTP_OK);
+            return response()->json($listado, Response::HTTP_OK);
 
 
-                //dd($listado);
+            //dd($listado);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al listar los datos de practicas: '.$ex->getMessage()
+                'error' => 'Hubo un error al listar los datos de practicas: ' . $ex->getMessage()
             ], 206);
         }
     }
@@ -83,12 +83,25 @@ class PracticasController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'tipo_practica' => 'required',
+            'cupos' => 'required|numeric|min:1|max:20',
+            'horas_cumplir' => 'required|numeric|min:1|max:200',
+            'ciclo_necesario' => 'min:3|max:20',
+            'fecha_inicio' => 'required',
+            'modalidad' => 'required',
+            'actividades' => 'min:20|max:250',
+            'requerimientos' => 'min:20|max:250',
+            'idcarrera' => 'required',
+            'idarea' => 'required',
+            'idempresa' => 'required'
+        ]);
         try {
             $practicas = Practicas::create($request->all());
-            return response()->json($practicas,Response::HTTP_CREATED);
+            return response()->json($practicas, Response::HTTP_CREATED);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al registrar los datos de practicas: '.$ex->getMessage()
+                'error' => 'Hubo un error al registrar los datos de practicas: ' . $ex->getMessage()
             ], 400);
         }
     }
@@ -103,10 +116,10 @@ class PracticasController extends Controller
     {
         try {
             $practicas = Practicas::find($id);
-            return response()->json($practicas,Response::HTTP_OK);
+            return response()->json($practicas, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al encontrar la practica =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Hubo un error al encontrar la practica =>' . $id . ' : ' . $ex->getMessage()
             ], 404);
         }
     }
@@ -131,13 +144,26 @@ class PracticasController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'tipo_practica' => 'required',
+            'cupos' => 'required|numeric|min:1|max:20,cupos',
+            'horas_cumplir' => 'required|numeric|min:1|max:200,horas_cumplir',
+            'ciclo_necesario' => 'min:3|max:20,ciclo_necesario',
+            'fecha_inicio' => 'required',
+            'modalidad' => 'required',
+            'actividades' => 'min:20|max:250,actividades',
+            'requerimientos' => 'min:20|max:250,requerimientos',
+            'idcarrera' => 'required',
+            'idarea' => 'required',
+            'idempresa' => 'required'
+        ]);
         try {
             $practicas = Practicas::findOrFail($id);
             $practicas->update($request->all());
-            return response()->json($practicas,Response::HTTP_OK);
+            return response()->json($practicas, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al actualizar la practica =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Hubo un error al actualizar la practica =>' . $id . ' : ' . $ex->getMessage()
             ], 206);
         }
     }
@@ -152,11 +178,10 @@ class PracticasController extends Controller
     {
         try {
             Practicas::find($id)->delete();
-            return response()->json([],Response::HTTP_OK);
-
+            return response()->json([], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al eliminar la practica =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Hubo un error al eliminar la practica =>' . $id . ' : ' . $ex->getMessage()
             ], 400);
         }
     }

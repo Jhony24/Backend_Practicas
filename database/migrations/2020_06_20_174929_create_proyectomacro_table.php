@@ -31,7 +31,7 @@ class CreateProyectomacroTable extends Migration
 
             $table->string('nombre_prmacro',100)->unique();
             $table->string('encargado',100);
-            $table->string('descripcion',300);
+            $table->string('descripcion',250);
             $table->integer('estadomacro')->default(0);
             $table->softDeletes();
             $table->timestamps();

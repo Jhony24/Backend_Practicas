@@ -12,7 +12,7 @@ class Practicas extends Model
     protected $table='practicas';
     protected $primaryKey='id';
     protected $dates = ['deleted_at']; //Registramos la nueva columna
-    protected $fillable = ['id','externalid_practicas','tipo_practica','cupos','horas_cumplir','ciclo_necesario','fecha_inicio','hora_entrada','hora_salida','salario','actividades','requerimientos','ppestado','idcarrera','idarea','idempresa'];
+    protected $fillable = ['id','externalid_practicas','tipo_practica','cupos','horas_cumplir','modalidad','ciclo_necesario','fecha_inicio','hora_entrada','hora_salida','salario','actividades','requerimientos','ppestado','idcarrera','idarea','idempresa'];
 
     public static function boot()
     {

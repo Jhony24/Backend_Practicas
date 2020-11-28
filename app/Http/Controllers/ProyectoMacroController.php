@@ -22,15 +22,15 @@ class ProyectoMacroController extends Controller
     public function index()
     {
         try {
-            $listado=ProyectoMacro::where('proyectomacro.idcarrera','=',Auth::user()->idcarrera)
+            $listado = ProyectoMacro::where('proyectomacro.idcarrera', '=', Auth::user()->idcarrera)
                 //->join('carreras','practicas.idcarrera','=','carreras.id')
-                ->join('areas','proyectomacro.idarea','=','areas.id')
-                ->select('proyectomacro.*','areas.nombrearea')
+                ->join('areas', 'proyectomacro.idarea', '=', 'areas.id')
+                ->select('proyectomacro.*', 'areas.nombrearea')
                 ->get();
-                return response()->json($listado, Response::HTTP_OK);
+            return response()->json($listado, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al listar los datos de proyecto macro: '.$ex->getMessage()
+                'error' => 'Hubo un error al listar los datos de proyecto macro: ' . $ex->getMessage()
             ], 206);
         }
     }
@@ -53,13 +53,22 @@ class ProyectoMacroController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'nombre_prmacro' => 'required|unique:proyectomacro|min:10|max:100',
+            'encargado' => 'required|min:10|max:100',
+            'descripcion' => 'min:20|max:250',
+            'estadomacro' => 'required',
+            'idcarrera' => 'required',
+            'idarea' => 'required',
+
+        ]);
         try {
 
             $macro = ProyectoMacro::create($request->all());
-            return response()->json($macro,Response::HTTP_CREATED);
+            return response()->json($macro, Response::HTTP_CREATED);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al registrar los datos del proyecto macro: '.$ex->getMessage()
+                'error' => 'Hubo un error al registrar los datos del proyecto macro: ' . $ex->getMessage()
             ], 400);
         }
     }
@@ -73,15 +82,15 @@ class ProyectoMacroController extends Controller
     public function show($id)
     {
         try {
-            $listado=ProyectoBasico::where('proyectobasico.idmacro','=',$id)
-            //->join('carreras','practicas.idcarrera','=','carreras.id')
-            ->join('empresas','proyectobasico.idempresa','=','empresas.id')
-            ->select('proyectobasico.*','empresas.nombreempresa','empresas.tipo_empresa','empresas.direccion','empresas.correo')
-            ->get();
-            return response()->json($listado,Response::HTTP_OK);
+            $listado = ProyectoBasico::where('proyectobasico.idmacro', '=', $id)
+                //->join('carreras','practicas.idcarrera','=','carreras.id')
+                ->join('empresas', 'proyectobasico.idempresa', '=', 'empresas.id')
+                ->select('proyectobasico.*', 'empresas.nombreempresa', 'empresas.tipo_empresa', 'empresas.direccion', 'empresas.correo')
+                ->get();
+            return response()->json($listado, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al encontrar el proyecto macro =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Hubo un error al encontrar el proyecto macro =>' . $id . ' : ' . $ex->getMessage()
             ], 404);
         }
     }
@@ -106,13 +115,22 @@ class ProyectoMacroController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'nombre_prmacro' => 'required|unique:proyectomacro|min:10|max:100,nombre_prmacro',
+            'encargado' => 'required|min:10|max:100',
+            'descripcion' => 'min:20|max:250',
+            'estadomacro' => 'required',
+            'idcarrera' => 'required',
+            'idarea' => 'required',
+
+        ]);
         try {
             $macro = ProyectoMacro::findOrFail($id);
             $macro->update($request->all());
-            return response()->json($macro,Response::HTTP_OK);
+            return response()->json($macro, Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al actualizar el proyecto macro =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Hubo un error al actualizar el proyecto macro =>' . $id . ' : ' . $ex->getMessage()
             ], 206);
         }
     }
@@ -127,11 +145,10 @@ class ProyectoMacroController extends Controller
     {
         try {
             ProyectoMacro::find($id)->delete();
-            return response()->json([],Response::HTTP_OK);
-
+            return response()->json([], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([
-                'error'=>'Hubo un error al eliminar el proyecto macro =>'.$id.' : '.$ex->getMessage()
+                'error' => 'Hubo un error al eliminar el proyecto macro =>' . $id . ' : ' . $ex->getMessage()
             ], 400);
         }
     }

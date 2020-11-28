@@ -17,12 +17,12 @@ class CreateConvenioTable extends Migration
             $table->increments("id");
             $table->uuid('externalid_convenio')->unique();
 
-            $table->string('tipo_convenio',100);
+            $table->string('tipo_convenio',50);
             $table->integer('idempresa')->unsigned();
             $table->foreign('idempresa')->references('id')->on('empresas')
                 ->onDelete('cascade');
             $table->date('fecha_inicio');
-            $table->string('fecha_culminacion',100);
+            $table->string('fecha_culminacion',7);
             $table->string('objeto',100);
             $table->integer('idcarrera')->unsigned();
             $table->foreign('idcarrera')->references('id')->on('carreras')

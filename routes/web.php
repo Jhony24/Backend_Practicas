@@ -96,6 +96,15 @@ $router->group(['middleware' => ['auth'], 'prefix' => 'api'], function () use ($
     $router->delete('empresa/{id}', 'EmpresasController@destroy');
 });
 
+//ficticio
+$router->group(['middleware' => ['auth'], 'prefix' => 'api'], function () use ($router) {
+    $router->get('ficticio', 'FicticioController@index');
+    $router->get('ficticio/{id}', 'FicticioController@show');
+    $router->post('ficticio', 'FicticioController@store');
+    $router->put('ficticio/{id}', 'FicticioController@update');
+    $router->delete('ficticio/{id}', 'FicticioController@destroy');
+});
+
 //practicas
 $router->group(['middleware' => ['auth'], 'prefix' => 'api'], function () use ($router) {
     $router->get('practica', 'PracticasController@index');

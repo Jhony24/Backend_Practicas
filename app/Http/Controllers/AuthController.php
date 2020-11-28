@@ -87,7 +87,7 @@ class AuthController extends Controller
             $user->asignarRol(2);
 
             //$user->roles()->sync(Role::where('nombre_rol', 'user')->first());
-            Mail::to("jhonycupos@gmail.com")->send(new ActivarUsuario($message));
+            //Mail::to("jhonycupos@gmail.com")->send(new ActivarUsuario($message));
             return response()->json(['usuario' => $user, 'message' => 'Usuario Creado'], 201);
         } catch (\Exception $e) {
             //return error message
@@ -137,7 +137,7 @@ class AuthController extends Controller
             $user->estadousuario = $request->estadousuario = 1;
             $user->email = $request->email;
             $user->save();
-            Mail::to($user->email = $request->email)->send(new Activacion());
+           // Mail::to($user->email = $request->email)->send(new Activacion());
             return response()->json([$user], Response::HTTP_OK);
         } catch (Exception $ex) {
             return response()->json([

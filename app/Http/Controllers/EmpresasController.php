@@ -55,14 +55,19 @@ class EmpresasController extends Controller
     {
         $this->validate($request, [
             'idcarrera' => 'required',
-            'nombreempresa' => 'required|min:20|max:200',
-            'nombrerepresentante' => 'required|min:15|max:100',
-            'ruc' => 'required',
+            'nombreempresa' => 'required|min:10|max:200',
+            'nombrerepresentante' => 'required|min:10|max:100',
+            'ruc' => 'required|min:13|max:13',
             'direccion' => 'required|min:20|max:150',
-            'telefono' => 'required',
             'correo' => 'email',
             'actividades' => 'min:20|max:200'
         ]);
+
+        if ($this->validateEmpresa($request->ruc)) {
+            if ($this->validateEmpresaCarrera($request->idcarrera)) {
+                return $this->failedResponse();
+            }
+        }
         try {
             $empresas = Empresas::create($request->all());
             return response()->json($empresas, Response::HTTP_CREATED);
@@ -71,6 +76,21 @@ class EmpresasController extends Controller
                 'error' => 'Hubo un error al registrar los datos de empresas: ' . $ex->getMessage()
             ], 400);
         }
+    }
+
+    public function validateEmpresa($ruc)
+    {
+        return Empresas::where('ruc', $ruc)->first();
+    }
+    public function validateEmpresaCarrera($idcarrera)
+    {
+        return Empresas::where('idcarrera', $idcarrera)->first();
+    }
+    public function failedResponse()
+    {
+        return response()->json([
+            'error' => 'Empresa ya existe'
+        ], Response::HTTP_NOT_FOUND);
     }
 
     /**
@@ -111,6 +131,17 @@ class EmpresasController extends Controller
      */
     public function update(Request $request, $id)
     {
+
+        $this->validate($request, [
+            'idcarrera' => 'required',
+            'nombreempresa' => 'required|min:10|max:200',
+            'nombrerepresentante' => 'required|min:10|max:100',
+            'ruc' => 'required|min:13|max:13',
+            'direccion' => 'required|min:20|max:150',
+            'correo' => 'email',
+            'actividades' => 'min:20|max:200'
+        ]);
+       
         try {
             $empresas = Empresas::findOrFail($id);
             $empresas->update($request->all());

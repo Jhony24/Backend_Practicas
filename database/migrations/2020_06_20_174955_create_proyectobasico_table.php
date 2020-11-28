@@ -32,8 +32,8 @@ class CreateProyectobasicoTable extends Migration
             $table->integer('horas_cumplir')->nullable();
             $table->date('fecha_inicio');
             $table->date('fecha_fin')->nullable();
-            $table->string('actividades', 200)->nullable();
-            $table->string('requerimientos', 200)->nullable();
+            $table->string('actividades', 250)->nullable();
+            $table->string('requerimientos', 250)->nullable();
             $table->integer('estadobasico')->default(0);
             $table->softDeletes();
             $table->timestamps();
